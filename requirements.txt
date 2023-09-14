@@ -1,7 +1,7 @@
-uvicorn[standard]==0.23.0
-gunicorn==21.2.0
-fastapi[all]==0.103.1
+uvicorn[standard]==0.20.0
+gunicorn==20.1.0
+fastapi[all]==0.88.0
 python-multipart
-pandas==2.1.0
+pandas==2.0.1
 numpy==1.24.4
 numba==0.57.1

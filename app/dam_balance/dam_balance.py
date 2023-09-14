@@ -37,7 +37,7 @@ def calc_surface_area(
     return surface_area
 
 
-def daily_sim(daily_met, dam_config) -> list:
+def daily_sim(daily_met, dam_config, leaky_dam) -> list:
     """Run a daily dam simulation.
     
     Parameters
@@ -56,6 +56,9 @@ def daily_sim(daily_met, dam_config) -> list:
         for the dam volume (`dam_volume`), initial dam water
         volume (`init_water_volume`), slope (`slope`), and
         base length (`base`).
+    
+    leaky_dam : bool
+        If a leaky dam, 5 mm is lost per-day. 
     
     Returns
     -------
@@ -112,6 +115,9 @@ def daily_sim(daily_met, dam_config) -> list:
         tmp_direct_rain = tmp_surface_area * daily_met[day, 0]
 
         tmp_volume = tmp_volume - tmp_evap - tmp_outflows + tmp_inflows + tmp_direct_rain
+
+        if leaky_dam:
+            tmp_volume = tmp_volume - (5 * 0.001) #  5 mm lost per day in m^3
 
         if tmp_volume < 0:
             tmp_volume = 0

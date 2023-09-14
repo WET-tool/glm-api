@@ -12,7 +12,7 @@ import numpy as np
 
 from glmpy import simulation as sim
 
-# import app.dam_balance.dam_balance as dam_balance
+import app.dam_balance.dam_balance as dam_balance
 
 description = """
 API for the General Lake Model (GLM)
@@ -105,13 +105,9 @@ def run_glm_json(
     variables: list = Form(),
     out_dir: str = Form()
 ):  
-    print("starting")
     # run simulation
     glm_run = sim.GlmSim(files, True, "/inputs")
-    print("ok")
-    print(glm_run)
     inputs_dir = glm_run.prepare_inputs()
-    print(inputs_dir)
     glm_run.glm_run(inputs_dir, "/glm/glm")
 
     # process outputs
@@ -122,20 +118,21 @@ def run_glm_json(
     return JSONResponse(json_output)
 
 
-# @app.post("/inputs_dam_sim_basic", tags=["inputs_dam_sim_basic"])
-# def run_dam_sim_basic(
-#     files: list[UploadFile]
-# ):
-#     # process input files
-#     for f in files:
-#         # see NumPy load() docs - NumPy load() expects a filelike object with a read method
-#         # the NumPy load() function will handle calling read()
-#         if f.filename == "dam_sim_inputs.npy":
-#             tmp_met = np.load(f.file)
+@app.post("/inputs_dam_sim_basic", tags=["inputs_dam_sim_basic"])
+def run_dam_sim_basic(
+    files: list[UploadFile],
+    leaky_dam: bool = Form()
+):
+    # process input files
+    for f in files:
+        # see NumPy load() docs - NumPy load() expects a filelike object with a read method
+        # the NumPy load() function will handle calling read()
+        if f.filename == "dam_sim_inputs.npy":
+            tmp_met = np.load(f.file)
         
-#         if f.filename == "dam_config.json":
-#             dam_config = json.loads(f.file.read()) 
+        if f.filename == "dam_config.json":
+            dam_config = json.loads(f.file.read()) 
 
-#     basic_sim_outputs = dam_balance.daily_sim(tmp_met, dam_config)   
+    basic_sim_outputs = dam_balance.daily_sim(tmp_met, dam_config, leaky_dam)   
 
-#     return JSONResponse(basic_sim_outputs)
+    return JSONResponse(basic_sim_outputs)
