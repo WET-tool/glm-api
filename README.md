@@ -1,6 +1,6 @@
 # GLM API
 
-A FastAPI interface to the General Lake Model or a simple water balance modal adapted from DAMCAT logic. 
+A FastAPI interface to the General Lake Model or a simple water balance model adapted from DAMCAT logic. 
 
 The FastAPI application publishes the following endpoints:
 
