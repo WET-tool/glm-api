@@ -1,4 +1,18 @@
-# WET-server
+# GLM API
+
+A FastAPI interface to the General Lake Model or a simple water balance modal adapted from DAMCAT logic. 
+
+The FastAPI application published the following endpoints:
+
+* `inputs_files`: Run GLM simulation and receive all outputs (including netcdf) in a zip file.
+* `inputs_csv_files`: Run GLM simulation and receive all CSV outputs (excluding netcdf) in a zip file.
+* `inputs_json_files`: Run GLM simulation and receive all CSV outputs converted to JSON in a zip file.
+* `inputs_json`: Run GLM simulation and receive all CSV outputs converted to JSON.
+* `inputs_dam_sim_basic`: Run a simple farm dam simulation using logic based off DAMCAT v5.
+
+## Deploy
+
+Deployment is via Docker.
 
 Build:
 
@@ -21,10 +35,3 @@ pip install -r requirements.txt
 pip install glm-py-0.0.1.tar.gz
 ```
 
-
-Tests:
-
-```
-cd tests
-python test.py
-```
