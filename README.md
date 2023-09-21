@@ -32,6 +32,6 @@ Dev environment:
 conda create -n fastapi python=3.11
 conda activate fastapi
 pip install -r requirements.txt
-pip install glm-py-0.0.1.tar.gz
+pip install glm-py-0.0.2.tar.gz
 ```
 
