@@ -2,7 +2,7 @@
 
 A FastAPI interface to the General Lake Model or a simple water balance modal adapted from DAMCAT logic. 
 
-The FastAPI application published the following endpoints:
+The FastAPI application publishes the following endpoints:
 
 * `inputs_files`: Run GLM simulation and receive all outputs (including netcdf) in a zip file.
 * `inputs_csv_files`: Run GLM simulation and receive all CSV outputs (excluding netcdf) in a zip file.
