@@ -1,7 +1,7 @@
 import numpy as np
-# from numba import jit
+from numba import jit
 
-
+@jit
 def calc_depth(
         base: float,
         slope: float,
@@ -23,7 +23,7 @@ def calc_depth(
 
     return depth
 
-
+@jit
 def calc_surface_area(
         base: float,
         slope: float,
@@ -36,7 +36,7 @@ def calc_surface_area(
 
     return surface_area
 
-
+@jit
 def daily_sim(daily_met, dam_config, leaky_dam) -> list:
     """Run a daily dam simulation.
     
