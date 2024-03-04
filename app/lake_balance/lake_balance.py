@@ -37,8 +37,8 @@ def calc_surface_area(
     return surface_area
 
 # @njit
-def daily_sim(daily_met, dam_config, leaky_dam) -> list:
-    """Run a daily dam simulation.
+def daily_sim(daily_met, lake_config, leaky_lake) -> list:
+    """Run a daily lake simulation.
     
     Parameters
     ----------
@@ -51,14 +51,14 @@ def daily_sim(daily_met, dam_config, leaky_dam) -> list:
             column 2 is daily inflows from the roaded catchment, 
             column 3 is daily outflows due to farm management.
     
-    dam_config : dict
-        Dam simulation dictionary object with key:value pairs
-        for the dam volume (`dam_volume`), initial dam water
+    lake_config : dict
+        Lake simulation dictionary object with key:value pairs
+        for the lake volume (`lake_volume`), initial lake water
         volume (`init_water_volume`), slope (`slope`), and
         base length (`base`).
     
-    leaky_dam : bool
-        If a leaky dam, 5 mm is lost per-day. 
+    leaky_lake : bool
+        If a leaky lake, 5 mm is lost per-day. 
     
     Returns
     -------
@@ -71,10 +71,10 @@ def daily_sim(daily_met, dam_config, leaky_dam) -> list:
     """
     
     ndays = daily_met.shape[0]
-    init_dam_volume = dam_config["dam_volume"]
-    init_water_volume = dam_config["init_water_volume"]
-    slope = dam_config["slope"]
-    base = dam_config["base"]
+    init_lake_volume = lake_config["lake_volume"]
+    init_water_volume = lake_config["init_water_volume"]
+    slope = lake_config["slope"]
+    base = lake_config["base"]
 
 
     # output array to fill with each iteration
@@ -111,12 +111,12 @@ def daily_sim(daily_met, dam_config, leaky_dam) -> list:
         # outflows (livestock drinking and other uses)
         tmp_outflows = daily_met[day, 3]
 
-        # direct rain on the dam
+        # direct rain on the lake
         tmp_direct_rain = tmp_surface_area * daily_met[day, 0]
 
         tmp_volume = tmp_volume - tmp_evap - tmp_outflows + tmp_inflows + tmp_direct_rain
 
-        if leaky_dam:
+        if leaky_lake:
             tmp_volume = tmp_volume - (5 * 0.001) #  5 mm lost per day in m^3
 
         if tmp_volume < 0:
@@ -124,8 +124,8 @@ def daily_sim(daily_met, dam_config, leaky_dam) -> list:
             tmp_depth = 0
             tmp_surface_area = 0
         
-        if tmp_volume > init_dam_volume:
-            tmp_volume = init_dam_volume
+        if tmp_volume > init_lake_volume:
+            tmp_volume = init_lake_volume
             tmp_depth = calc_depth(base, slope, tmp_volume)
             tmp_surface_area = calc_surface_area(base, slope, tmp_depth)
 

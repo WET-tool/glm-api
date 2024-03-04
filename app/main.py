@@ -12,7 +12,7 @@ import numpy as np
 
 from glmpy import simulation as sim
 
-import app.dam_balance.dam_balance as dam_balance
+import app.lake_balance.lake_balance as lake_balance
 
 description = """
 API for the General Lake Model (GLM)
@@ -36,8 +36,8 @@ tags_metadata = [
         "description": "Run GLM simulation and receive all CSV outputs converted to JSON.",
     },
     {
-        "name": "inputs_dam_sim_basic",
-        "description": "Run a simple farm dam simulation using logic based off DAMCAT v5.",
+        "name": "inputs_lake_sim_basic",
+        "description": "Run a simple lake simulation using logic based off DAMCAT v5.",
     },
 ]
 
@@ -118,21 +118,21 @@ def run_glm_json(
     return JSONResponse(json_output)
 
 
-@app.post("/inputs_dam_sim_basic", tags=["inputs_dam_sim_basic"])
-def run_dam_sim_basic(
+@app.post("/inputs_lake_sim_basic", tags=["inputs_lake_sim_basic"])
+def run_lake_sim_basic(
     files: list[UploadFile],
-    leaky_dam: bool = Form()
+    leaky_lake: bool = Form()
 ):
     # process input files
     for f in files:
         # see NumPy load() docs - NumPy load() expects a filelike object with a read method
         # the NumPy load() function will handle calling read()
-        if f.filename == "dam_sim_inputs.npy":
+        if f.filename == "lake_sim_inputs.npy":
             tmp_met = np.load(f.file)
         
-        if f.filename == "dam_config.json":
-            dam_config = json.loads(f.file.read()) 
+        if f.filename == "lake_config.json":
+            lake_config = json.loads(f.file.read()) 
 
-    basic_sim_outputs = dam_balance.daily_sim(tmp_met, dam_config, leaky_dam)   
+    basic_sim_outputs = lake_balance.daily_sim(tmp_met, lake_config, leaky_lake)   
 
     return JSONResponse(basic_sim_outputs)
