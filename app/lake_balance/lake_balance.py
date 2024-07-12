@@ -1,4 +1,5 @@
 import numpy as np
+import math
 # from numba import njit
 
 # @njit
@@ -23,6 +24,7 @@ def calc_depth(
 
     return depth
 
+
 # @njit
 def calc_surface_area(
         base: float,
@@ -35,6 +37,26 @@ def calc_surface_area(
     surface_area = top_length * top_length
 
     return surface_area
+
+
+def calc_water_in_lake_surface_area(
+    base: float,
+    slope: float,
+    depth: float
+) -> float:
+    """Compute the surface area of water touching dam sides and base.
+    
+    This is used to compute leakage at each time step."""
+    top_length = 2 * (depth * slope) + base
+    
+    # lateral surface area of a truncated pyramid
+    L = (top_length + base) * math.sqrt(((top_length - base) * (top_length - base)) + (4 * (depth * depth)))
+
+    # base area of truncated pyramid
+    base_area = base * base
+
+    return L + base_area
+
 
 # @njit
 def daily_sim(daily_met, lake_config, leaky_lake) -> list:
@@ -117,7 +139,8 @@ def daily_sim(daily_met, lake_config, leaky_lake) -> list:
         tmp_volume = tmp_volume - tmp_evap - tmp_outflows + tmp_inflows + tmp_direct_rain
 
         if leaky_lake:
-            tmp_volume = tmp_volume - (5 * 0.001) #  5 mm lost per day in m^3
+            water_area_touching_dam = calc_water_in_lake_surface_area(base, slope, tmp_depth)
+            tmp_volume = tmp_volume - (5 * 0.001 * water_area_touching_dam) #  5 mm lost per day in m^3
 
         if tmp_volume < 0:
             tmp_volume = 0
