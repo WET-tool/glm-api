@@ -121,7 +121,8 @@ def run_glm_json(
 @app.post("/inputs_lake_sim_basic", tags=["inputs_lake_sim_basic"])
 def run_lake_sim_basic(
     files: list[UploadFile],
-    leaky_lake: bool = Form()
+    leaky_lake: bool = Form(),
+    evap_factor: float = Form(),
 ):
     # process input files
     for f in files:
@@ -133,6 +134,6 @@ def run_lake_sim_basic(
         if f.filename == "lake_config.json":
             lake_config = json.loads(f.file.read()) 
 
-    basic_sim_outputs = lake_balance.daily_sim(tmp_met, lake_config, leaky_lake)   
+    basic_sim_outputs = lake_balance.daily_sim(tmp_met, lake_config, leaky_lake, evap_factor)   
 
     return JSONResponse(basic_sim_outputs)

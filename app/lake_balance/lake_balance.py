@@ -59,7 +59,7 @@ def calc_water_in_lake_surface_area(
 
 
 # @njit
-def daily_sim(daily_met, lake_config, leaky_lake) -> list:
+def daily_sim(daily_met, lake_config, leaky_lake, evap_factor) -> list:
     """Run a daily lake simulation.
     
     Parameters
@@ -80,7 +80,10 @@ def daily_sim(daily_met, lake_config, leaky_lake) -> list:
         base length (`base`).
     
     leaky_lake : bool
-        If a leaky lake, 5 mm is lost per-day. 
+        If a leaky lake, 5 mm per m2 is lost per-day. 
+
+    evap_factor : float
+        % reduction in evaporation due to evaporation treatment.
     
     Returns
     -------
@@ -125,7 +128,7 @@ def daily_sim(daily_met, lake_config, leaky_lake) -> list:
         tmp_surface_area = calc_surface_area(base, slope, tmp_depth)
 
         # compute evaporation
-        tmp_evap = tmp_surface_area * daily_met[day, 1]
+        tmp_evap = tmp_surface_area * daily_met[day, 1] * (1 - (evap_factor / 100))
 
         # inflows (runoff from roaded catchment)
         tmp_inflows = daily_met[day, 2]
@@ -136,11 +139,11 @@ def daily_sim(daily_met, lake_config, leaky_lake) -> list:
         # direct rain on the lake
         tmp_direct_rain = tmp_surface_area * daily_met[day, 0]
 
-        tmp_volume = tmp_volume - tmp_evap - tmp_outflows + tmp_inflows + tmp_direct_rain
-
         if leaky_lake:
             water_area_touching_dam = calc_water_in_lake_surface_area(base, slope, tmp_depth)
             tmp_volume = tmp_volume - (5 * 0.001 * water_area_touching_dam) #  5 mm lost per day in m^3
+
+        tmp_volume = tmp_volume - tmp_evap - tmp_outflows + tmp_inflows + tmp_direct_rain
 
         if tmp_volume < 0:
             tmp_volume = 0
